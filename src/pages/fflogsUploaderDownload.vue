@@ -295,7 +295,7 @@ const accelerationNodeList = [
   ],
 ];
 onMounted(() => {
-  fetch("https://api.github.com/repos/RPGLogs/Uploaders-fflogs/releases/latest", { method: "GET" })
+  fetch("https://api.github.com/repos/RPGLogs/Uploaders-archon/releases/latest", { method: "GET" })
     .then((res) => {
       if (res.ok) return res.json();
       throw res.status;
@@ -318,10 +318,10 @@ function showErrorPopup(message: string) {
   <div class="common-layout">
     <el-container>
       <el-main>
-        <h1>FFLOGS上传器 加速下载</h1>
+        <h1>Uploaders-archon 下载</h1>
         <h2>最新版本：{{ data.res.tag_name || "loading" }}</h2>
         <h2>更新时间：{{ data.res.published_at || "loading" }}</h2>
-        <h3 v-if="data.res.tag_name">加速节点：（挨个试试，总有一个能用的）</h3>
+        <h3 v-if="data.res.tag_name">节点：（挨个试试，总有一个能用的）</h3>
         <div flex="~ col wrap gap1" items-start>
           <el-link
             v-for="(item, index) in accelerationNodeList"
