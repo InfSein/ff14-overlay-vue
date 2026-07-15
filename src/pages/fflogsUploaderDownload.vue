@@ -327,7 +327,7 @@ function showErrorPopup(message: string) {
             v-for="(item, index) in accelerationNodeList"
             v-show="data.res.tag_name"
             :key="index"
-            :href="`${item[0]}/RPGLogs/Uploaders-fflogs/releases/download/v${data.res.name}/${fileName}`"
+            :href="`${item[0]}/RPGLogs/Uploaders-archon/releases/download/v${data.res.name}/${fileName}`"
             type="primary"
             m-r-8px
           >
