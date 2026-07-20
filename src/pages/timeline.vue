@@ -316,6 +316,31 @@ function handleInCombatChanged(ev: {
   else if (!ev.detail.inGameCombat && !ev.detail.inACTCombat) stopTimeline();
 }
 
+async function handleOpenSettings() {
+  try {
+    await openExternalUrl("#/timelineSettings");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    ElMessage.closeAll();
+    if (message.includes("WSServer")) {
+      ElMessage({
+        message:
+          "打开编辑页面失败：请先在 OverlayPlugin 的「OverlayPlugin WSServer」设置（「直播/本地共享悬浮窗」）中点击「启动」以启用服务",
+        type: "error",
+        duration: 8000,
+        showClose: true,
+      });
+    } else {
+      ElMessage({
+        message: `打开编辑页面失败：${message}`,
+        type: "error",
+        duration: 8000,
+        showClose: true,
+      });
+    }
+  }
+}
+
 function init() {
   addOverlayListener("onLogEvent", handleLogEvent);
   addOverlayListener("onPlayerChangedEvent", handlePlayerChangedEvent);
@@ -392,7 +417,7 @@ onUnmounted(() => {
     </div>
     <template #readme>
       <div v-if="demo" class="unlocked-toolbar">
-        <button class="open-settings-btn" @click="openExternalUrl('#/timelineSettings')">
+        <button class="open-settings-btn" @click="handleOpenSettings">
           打开时间轴设置页面
         </button>
       </div>
