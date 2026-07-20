@@ -342,7 +342,11 @@ function processLogData(logText: string) {
                       const { offset: nOffset, flags: nFlags } = getEffectOffset(np); // 复用辅助函数
                       // 用 sequence 字段判断：同一次技能的所有行 sequence 相同
                       const nSeq = np[44 + nOffset];
-                      if (mainSequence ? nSeq !== mainSequence : (np[4] !== actionId || np[2] !== sourceId || np[1] !== parts[1])) {
+                      if (
+                        mainSequence
+                          ? nSeq !== mainSequence
+                          : np[4] !== actionId || np[2] !== sourceId || np[1] !== parts[1]
+                      ) {
                         break;
                       }
                       const nTargetIdx = parseInt(np[45 + nOffset] ?? "0", 10);
