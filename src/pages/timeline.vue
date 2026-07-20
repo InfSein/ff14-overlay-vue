@@ -12,6 +12,8 @@ import {
   callOverlayHandler,
   removeOverlayListener,
 } from "../../cactbot/resources/overlay_plugin_api";
+import { useDemo } from "@/composables/useDemo";
+import { openExternalUrl } from "@/utils/overlayPlugin";
 import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useStorage } from "@vueuse/core";
 import CommonActWrapper from "@/components/common/ActWrapper.vue";
@@ -37,6 +39,7 @@ const playerState = useStorage("timeline-condition-2", {
   phase: undefined,
 } as ITimelineCondition);
 const dev = useDev();
+const demo = useDemo();
 
 const syncLines = computed(() => timelinePageData.loadedTimeline.filter((item) => item.sync));
 const loadedTimelineTTS = computed(() => timelinePageData.loadedTimeline.filter((v) => v.tts));
@@ -387,6 +390,13 @@ onUnmounted(() => {
       <button v-if="dev" @click="testAlert">弹窗测试</button>
       <span v-if="dev" style="color: white; background-color: black">{{ runtimeTimeSeconds }}</span>
     </div>
+    <template #readme>
+      <div v-if="demo" class="unlocked-toolbar">
+        <button class="open-settings-btn" @click="openExternalUrl('#/timelineSettings')">
+          打开时间轴设置页面
+        </button>
+      </div>
+    </template>
   </CommonActWrapper>
 </template>
 
@@ -447,6 +457,33 @@ onUnmounted(() => {
     position: fixed;
     bottom: 0;
     right: 0;
+  }
+}
+.unlocked-toolbar {
+  position: fixed;
+  top: 6px;
+  right: 6px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.open-settings-btn {
+  padding: 3px 8px;
+  cursor: pointer;
+  background-color: #2b2b2b;
+  color: #ffffff;
+  border: 1px solid #666666;
+  border-radius: 2px;
+  font-size: 13px;
+  user-select: none;
+
+  &:hover {
+    background-color: #3f3f3f;
+    border-color: #999999;
+  }
+
+  &:active {
+    background-color: #1a1a1a;
   }
 }
 </style>

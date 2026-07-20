@@ -9,6 +9,7 @@ import { useLang } from "@/composables/useLang";
 import { CONTENT_TYPES, useZone } from "@/composables/useZone";
 import logDefinitions from "../../cactbot/resources/netlog_defs";
 import NetRegexes from "../../cactbot/resources/netregexes";
+import { selectNativeDirectory } from "@/utils/overlayPlugin";
 import {
   addOverlayListener,
   removeOverlayListener,
@@ -38,6 +39,20 @@ import {
 } from "element-plus";
 
 const { t } = useLang();
+
+async function handleSelectFolder(row: Settings) {
+  const dir = await selectNativeDirectory();
+  if (dir && row) {
+    row.customPath = dir;
+  }
+}
+
+async function handleSelectDefaultFolder() {
+  const dir = await selectNativeDirectory();
+  if (dir) {
+    userConfig.value.path = dir;
+  }
+}
 
 interface Settings {
   type: ContentUsedType;
@@ -148,6 +163,14 @@ function initializeContentSettings() {
   userContentSetting.value.sort(
     (a, b) => CONTENT_TYPES.indexOf(a.type) - CONTENT_TYPES.indexOf(b.type),
   );
+  // 清理历史上与默认路径完全相等的 customPath，恢复为空字符串以自动跟随默认路径
+  if (userConfig.value.path) {
+    userContentSetting.value.forEach((item) => {
+      if (item.customPath === userConfig.value.path) {
+        item.customPath = "";
+      }
+    });
+  }
   // 补全可能因新增而缺失的设置项
   userContentSetting.value = userContentSetting.value.map((item) => ({
     ...(defaultEnabled.includes(item.type) ? DEFAULT_ENABLE_SETTINGS : DEFAULT_DISABLE_SETTINGS),
@@ -246,11 +269,6 @@ class Obs {
           const v = await this.ws.call("GetRecordDirectory");
           if (v.recordDirectory) {
             userConfig.value.path = v.recordDirectory;
-            userContentSetting.value.forEach((item) => {
-              if (item.customPath === "") {
-                item.customPath = v.recordDirectory;
-              }
-            });
           }
         }
         if (!userConfig.value.fileName) {
@@ -686,7 +704,11 @@ function tableRowClassName({ row }: { row: Settings }) {
                     <el-input
                       v-model="userConfig.path"
                       :placeholder="t('obs2.recordPathPlaceholder')"
-                    />
+                    >
+                      <template #append>
+                        <el-button @click="handleSelectDefaultFolder">选择目录</el-button>
+                      </template>
+                    </el-input>
                     <el-alert
                       :description="t('obs2.filePathExplanation')"
                       type="info"
@@ -822,9 +844,20 @@ function tableRowClassName({ row }: { row: Settings }) {
                     </template>
                   </el-table-column>
                 </el-table-column>
-                <el-table-column :label="t('obs2.Custom Path')" align="left" min-width="200">
+                <el-table-column :label="t('obs2.Custom Path')" align="left" min-width="240">
                   <template #default="scope">
-                    <el-input v-model="scope.row.customPath" style="width: 100%" />
+                    <el-input
+                      v-model="scope.row.customPath"
+                      :placeholder="userConfig.path ? `${userConfig.path}` : '跟随默认录制路径'"
+                      clearable
+                      style="width: 100%"
+                    >
+                      <template #append>
+                        <el-button @click="handleSelectFolder(scope.row as Settings)"
+                          >选择目录</el-button
+                        >
+                      </template>
+                    </el-input>
                   </template>
                 </el-table-column>
               </el-table>
