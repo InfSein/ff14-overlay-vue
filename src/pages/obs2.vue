@@ -176,14 +176,6 @@ function initializeContentSettings() {
     ...(defaultEnabled.includes(item.type) ? DEFAULT_ENABLE_SETTINGS : DEFAULT_DISABLE_SETTINGS),
     ...item,
   }));
-  // custom path
-  if (userConfig.value.path) {
-    userContentSetting.value.forEach((item) => {
-      if (item.customPath === "") {
-        item.customPath = userConfig.value.path;
-      }
-    });
-  }
 }
 
 class Obs {
