@@ -25,7 +25,7 @@ jobs:
           echo "$HOME/.vite-plus/bin" >> $GITHUB_PATH
 
       - name: Install Node.js
-        run: vp env pin lts && vp env install
+        run: vp env install
 
       - name: Install Dependencies
         run: vp install
