@@ -143,7 +143,7 @@ function initializeContentSettings() {
     ];
     const occ = userContentSetting.value.find((v) => v.type === "OccultCrescent");
     if (occ) {
-      occ.partyLength = 40;
+      occ.partyLength = 8;
     }
   } else {
     // 清理不存在的类型
@@ -176,6 +176,11 @@ function initializeContentSettings() {
     ...(defaultEnabled.includes(item.type) ? DEFAULT_ENABLE_SETTINGS : DEFAULT_DISABLE_SETTINGS),
     ...item,
   }));
+  // 修正 OccultCrescent 超过 8 的旧配置为 8
+  const occSetting = userContentSetting.value.find((v) => v.type === "OccultCrescent");
+  if (occSetting && occSetting.partyLength > 8) {
+    occSetting.partyLength = 8;
+  }
 }
 
 class Obs {
@@ -771,7 +776,7 @@ function tableRowClassName({ row }: { row: Settings }) {
                       <el-input-number
                         v-model="scope.row.partyLength"
                         :min="1"
-                        :max="48"
+                        :max="8"
                         style="width: 40px"
                         size="small"
                         :controls="false"
